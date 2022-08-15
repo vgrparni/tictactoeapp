@@ -6,7 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "com.tictactoe.app.*"})
 public class TictactoeappApplication {
 	 private static final Logger log = LoggerFactory.getLogger(TictactoeappApplication.class);
 	public static void main(String[] args) {
