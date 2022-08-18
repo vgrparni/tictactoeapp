@@ -18,6 +18,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewGameInfo'
+  /tictactoe/playersInfo:
+    get:
+      tags:
+        - tic-tac-toe-controller
+      operationId: getPlayersInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+
 components:
   schemas:
     NewGameInfo:
@@ -29,3 +44,10 @@ components:
           type: object
           additionalProperties:
             type: string
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
