@@ -16,10 +16,14 @@ public class PlayerService implements TictactoePlayersApiDelegate {
 	@Override
 	public ResponseEntity<List<Player>> getPlayersInfo() {
 		Player player1 = new Player();
+		player1.setId("X");
+		player1.setDescription("Player1");
 		Player player2 = new Player();
+		player2.setId("O");
+		player2.setDescription("Player2");
 		List<Player> playerList = new ArrayList<Player>();
 		playerList.add(player1);
 		playerList.add(player2);
-		return new ResponseEntity<>(playerList, HttpStatus.OK);
+		return new ResponseEntity<List<Player>>(playerList, HttpStatus.OK);
 	}
 }

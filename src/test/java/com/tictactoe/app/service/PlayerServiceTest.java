@@ -27,6 +27,7 @@ public class PlayerServiceTest {
 
 	private final String PLAYERS_INFO_ENDPOINT = "/tictactoe-players/info";
 	private final int BOARD_GAME_TEAM_SIZE = 2;
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -44,7 +45,14 @@ public class PlayerServiceTest {
 		List<Player> playerList = objectMapper.readValue(responseBody, List.class);
 		assertEquals(BOARD_GAME_TEAM_SIZE, playerList.size());
 	}
-	
-	
+
+	@Test
+	public void checkPlayersInformation() throws Exception {
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(PLAYERS_INFO_ENDPOINT);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		String responseBody = result.getResponse().getContentAsString();
+		String expectedPlayerTeamInfo = "[{\"id\":\"X\",\"description\":\"Player1\"},{\"id\":\"O\",\"description\":\"Player2\"}]";
+		assertEquals(expectedPlayerTeamInfo, responseBody);
+	}
 
 }
