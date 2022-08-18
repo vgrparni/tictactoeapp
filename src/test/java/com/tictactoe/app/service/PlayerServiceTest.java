@@ -25,22 +25,26 @@ import com.tictactoe.app.openapi.model.Player;
 @AutoConfigureMockMvc
 public class PlayerServiceTest {
 
+	private final String PLAYERS_INFO_ENDPOINT = "/tictactoe-players/info";
+	private final int BOARD_GAME_TEAM_SIZE = 2;
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Test
 	public void checkGetPlayerEndPointAvailable() throws Exception {
-		this.mockMvc.perform(get("/tictactoe-players/info")).andExpect(status().is(200));
+		this.mockMvc.perform(get(PLAYERS_INFO_ENDPOINT)).andExpect(status().is(200));
 	}
 
 	@Test
 	public void checkPlayersCount() throws Exception {
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/tictactoe-players/info");
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(PLAYERS_INFO_ENDPOINT);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String responseBody = result.getResponse().getContentAsString();
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<Player> playerList = objectMapper.readValue(responseBody, List.class);
-		assertEquals(2, playerList.size());
+		assertEquals(BOARD_GAME_TEAM_SIZE, playerList.size());
 	}
+	
+	
 
 }
