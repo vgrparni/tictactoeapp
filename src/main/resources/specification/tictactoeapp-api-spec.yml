@@ -18,7 +18,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NewGameInfo'
-  /tictactoe/playersInfo:
+  /tictactoe-players/playersInfo:
     get:
       tags:
         - tic-tac-toe-controller
