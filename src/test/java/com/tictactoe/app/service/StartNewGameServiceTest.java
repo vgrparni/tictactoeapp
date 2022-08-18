@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +45,18 @@ public class StartNewGameServiceTest {
 			
 	        assertEquals(GAME_BOARD_POSITIONS_COUNT, gameBoardInfo.getBoard().size());
 	        assertEquals(MESSAGE, gameBoardInfo.getMessage());
+	    }
+	    
+	    @Test
+	    public void checkNewGameBoardEmptyAlways() throws Exception {
+	    	RequestBuilder requestBuilder = MockMvcRequestBuilders.post(NEW_GAME_INFO_PATH);
+			MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+			String responseBody=  result.getResponse().getContentAsString();
+			ObjectMapper objectMapper = new ObjectMapper();
+			NewGameInfo gameBoardInfo = objectMapper.readValue(responseBody, NewGameInfo.class);
+			boolean allValuesAreNull = gameBoardInfo.getBoard().values()
+			        .stream()
+			        .allMatch(Objects::isNull);
+	        assertEquals(Boolean.TRUE, allValuesAreNull);
 	    }
 }
