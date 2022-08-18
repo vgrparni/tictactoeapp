@@ -18,12 +18,12 @@ import com.tictactoe.app.openapi.model.TurnResponse;
 public class GameStateService implements TictactoeApiDelegate {
 	private static final Logger log = LoggerFactory.getLogger(GameStateService.class);
 	private String MESSAGE = "Hello Mr.X and Mr.O your game started!,All the best and enjoy playing";
-	
-   @Override
+	private Map<String, String> gameBoard  = new HashMap<>();
+  
+@Override
    public ResponseEntity<NewGameInfo> startNewGame() {
 	   NewGameInfo newGameInfo = new NewGameInfo();
 	   newGameInfo.setMessage(MESSAGE);
-	   Map<String, String> gameBoard  = new HashMap<>();
 	   gameBoard.put("1", null);
 	   gameBoard.put("2", null);
 	   gameBoard.put("3", null);
@@ -37,9 +37,21 @@ public class GameStateService implements TictactoeApiDelegate {
        log.info("New game started!.");
 	 return new ResponseEntity<NewGameInfo>(newGameInfo, HttpStatus.CREATED);
    }
+   
    @Override
-public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
-	// TODO Auto-generated method stub
-	return TictactoeApiDelegate.super.playerTurn(turnRequest);
-}
+   public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
+	   gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
+	   TurnResponse turnResponse = new TurnResponse();
+	   turnResponse.setGameOver(Boolean.FALSE);
+	   turnResponse.setState(gameBoard);
+    return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+   }
+   
+   
+   public void getGameBoard(Map<String, String> gameBoard){
+	   this.gameBoard = gameBoard;
+   }
+   
+   
+
 }

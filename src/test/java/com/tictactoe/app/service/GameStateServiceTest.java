@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -18,7 +22,10 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.tictactoe.app.openapi.model.NewGameInfo;
+import com.tictactoe.app.openapi.model.TurnRequest;
+import com.tictactoe.app.openapi.model.TurnResponse;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,6 +37,9 @@ public class GameStateServiceTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private GameStateService gameStateService;
 
 	@Test
 	public void checkNewGmeStart() throws Exception {
@@ -58,4 +68,41 @@ public class GameStateServiceTest {
 		boolean allValuesAreNull = gameBoardInfo.getGameboard().values().stream().allMatch(Objects::isNull);
 		assertEquals(Boolean.TRUE, allValuesAreNull);
 	}
+
+	@Test
+	public void updatePlayer() throws Exception {
+
+		Map<String, String> expectedGameBoard = getGameBoardValues();
+		gameStateService.getGameBoard(expectedGameBoard);
+		TurnRequest turnRequest = new TurnRequest();
+		turnRequest.setPlayerId("X");
+		turnRequest.setPosition(1);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(turnRequest);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse responseActual = result.getResponse();
+
+		TurnResponse expectedResponse = new TurnResponse();
+		expectedResponse.setGameOver(Boolean.FALSE);
+		expectedResponse.setState(expectedGameBoard);
+		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
+
+	}
+
+	public Map<String, String> getGameBoardValues() {
+		Map<String, String> expectedGameBoard = new HashMap<>();
+		expectedGameBoard.put("1", null);
+		expectedGameBoard.put("2", null);
+		expectedGameBoard.put("3", null);
+		expectedGameBoard.put("4", null);
+		expectedGameBoard.put("5", null);
+		expectedGameBoard.put("6", null);
+		expectedGameBoard.put("7", null);
+		expectedGameBoard.put("8", null);
+		expectedGameBoard.put("9", null);
+		return expectedGameBoard;
+	}
+
 }
