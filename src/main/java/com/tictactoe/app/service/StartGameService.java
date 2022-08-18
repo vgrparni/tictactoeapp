@@ -18,8 +18,8 @@ public class StartGameService implements TictactoeApiDelegate {
    public ResponseEntity<NewGameInfo> startNewGame() {
 	   NewGameInfo newGameInfo = new NewGameInfo();
 	   newGameInfo.setMessage(MESSAGE);
-	   Map<String, String> board  = new HashMap<>();
-       newGameInfo.board(board);
+	   Map<String, String> gameBoard  = new HashMap<>();
+       newGameInfo.board(gameBoard);
 	 return new ResponseEntity<NewGameInfo>(newGameInfo, HttpStatus.CREATED);
    }
 }
