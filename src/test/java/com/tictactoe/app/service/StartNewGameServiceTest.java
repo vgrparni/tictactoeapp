@@ -23,6 +23,9 @@ import com.tictactoe.app.openapi.model.NewGameInfo;
 @AutoConfigureMockMvc
 public class StartNewGameServiceTest {
 	private static final String NEW_GAME_INFO_PATH = "/tictactoe/startNewGame";
+	private final int GAME_BOARD_POSITIONS_COUNT = 9;
+	private final String MESSAGE = "Hello Mr.X and Mr.O your game started!,All the best and enjoy playing";
+
 	 @Autowired
 	    private MockMvc mockMvc;
 	    @Test
@@ -38,7 +41,7 @@ public class StartNewGameServiceTest {
 			ObjectMapper objectMapper = new ObjectMapper();
 			NewGameInfo gameBoardInfo = objectMapper.readValue(responseBody, NewGameInfo.class);
 			
-	        assertEquals(9, gameBoardInfo.getBoard().size());
-	        assertEquals("Hello Mr.X and Mr.O your game started!,All the best and enjoy playing", gameBoardInfo.getMessage());
+	        assertEquals(GAME_BOARD_POSITIONS_COUNT, gameBoardInfo.getBoard().size());
+	        assertEquals(MESSAGE, gameBoardInfo.getMessage());
 	    }
 }
