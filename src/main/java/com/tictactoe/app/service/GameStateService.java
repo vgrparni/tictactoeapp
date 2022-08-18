@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 
 import com.tictactoe.app.openapi.api.TictactoeApiDelegate;
 import com.tictactoe.app.openapi.model.NewGameInfo;
+import com.tictactoe.app.openapi.model.TurnRequest;
+import com.tictactoe.app.openapi.model.TurnResponse;
 
 @Service
-public class StartGameService implements TictactoeApiDelegate {
-	private static final Logger log = LoggerFactory.getLogger(StartGameService.class);
+public class GameStateService implements TictactoeApiDelegate {
+	private static final Logger log = LoggerFactory.getLogger(GameStateService.class);
 	private String MESSAGE = "Hello Mr.X and Mr.O your game started!,All the best and enjoy playing";
 	
    @Override
@@ -35,4 +37,9 @@ public class StartGameService implements TictactoeApiDelegate {
        log.info("New game started!.");
 	 return new ResponseEntity<NewGameInfo>(newGameInfo, HttpStatus.CREATED);
    }
+   @Override
+public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
+	// TODO Auto-generated method stub
+	return TictactoeApiDelegate.super.playerTurn(turnRequest);
+}
 }
