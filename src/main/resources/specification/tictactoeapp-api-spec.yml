@@ -25,7 +25,7 @@ components:
       properties:
         message:
           type: string
-        board:
+        gameboard:
           type: object
           additionalProperties:
             type: string

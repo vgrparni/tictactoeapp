@@ -43,7 +43,7 @@ public class StartNewGameServiceTest {
 			ObjectMapper objectMapper = new ObjectMapper();
 			NewGameInfo gameBoardInfo = objectMapper.readValue(responseBody, NewGameInfo.class);
 			
-	        assertEquals(GAME_BOARD_POSITIONS_COUNT, gameBoardInfo.getBoard().size());
+	        assertEquals(GAME_BOARD_POSITIONS_COUNT, gameBoardInfo.getGameboard().size());
 	        assertEquals(MESSAGE, gameBoardInfo.getMessage());
 	    }
 	    
@@ -54,7 +54,7 @@ public class StartNewGameServiceTest {
 			String responseBody=  result.getResponse().getContentAsString();
 			ObjectMapper objectMapper = new ObjectMapper();
 			NewGameInfo gameBoardInfo = objectMapper.readValue(responseBody, NewGameInfo.class);
-			boolean allValuesAreNull = gameBoardInfo.getBoard().values()
+			boolean allValuesAreNull = gameBoardInfo.getGameboard().values()
 			        .stream()
 			        .allMatch(Objects::isNull);
 	        assertEquals(Boolean.TRUE, allValuesAreNull);

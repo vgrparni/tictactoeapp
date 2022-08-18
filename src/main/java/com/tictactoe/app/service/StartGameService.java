@@ -31,7 +31,7 @@ public class StartGameService implements TictactoeApiDelegate {
 	   gameBoard.put("7", null);
 	   gameBoard.put("8", null);
 	   gameBoard.put("9", null);
-       newGameInfo.board(gameBoard);
+       newGameInfo.gameboard(gameBoard);
        log.info("New game started!.");
 	 return new ResponseEntity<NewGameInfo>(newGameInfo, HttpStatus.CREATED);
    }
