@@ -6,6 +6,7 @@ import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,6 +42,7 @@ public class GameStateServiceTest {
 	private final int GAME_BOARD_POSITIONS_COUNT = 9;
 	private final String MESSAGE = "Hello Mr.X and Mr.O your game started!,All the best and enjoy playing";
 	private static final String PLAYER_TURN_INFO_PATH = "/tictactoe/playerTurn";
+	private static final String STATE_OF_GAME_BOARD_PATH = "/tictactoe/stateOfGameBoard";
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -276,6 +278,12 @@ public class GameStateServiceTest {
 				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
 		mockMvc.perform(requestBuilder).andExpect(status().is(400));
 	}
+	
+	@Test
+	public void checkStateOfGameBoard() throws Exception {
+		this.mockMvc.perform(get(STATE_OF_GAME_BOARD_PATH)).andExpect(status().is(200));
+	}
+
 
 	public Map<String, String> getGameBoardValues() {
 		Map<String, String> expectedGameBoard = new HashMap<>();

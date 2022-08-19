@@ -85,6 +85,11 @@ public class GameStateService implements TictactoeApiDelegate {
 			}
 		}
 	}
+	
+	@Override
+	public ResponseEntity<Map<String, String>> getStateOfGameBoard() {
+		return new ResponseEntity<Map<String, String>>(gameBoard, HttpStatus.OK);
+	}
 
 	public void getGameBoard(Map<String, String> gameBoard) {
 		this.gameBoard = gameBoard;
