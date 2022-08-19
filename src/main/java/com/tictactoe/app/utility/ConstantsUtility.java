@@ -17,6 +17,7 @@ public class ConstantsUtility {
 	public final static String PLAYER_2="Player2";
 	public final static String PLAYER_X_WIN_LINE="XXX";
 	public final static String PLAYER_O_WIN_LINE="OOO";
+	public final static String GAME_DRAW="draw";
 	
 	
 }
