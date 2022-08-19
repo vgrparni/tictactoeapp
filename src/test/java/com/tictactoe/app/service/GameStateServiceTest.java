@@ -1,10 +1,10 @@
 package com.tictactoe.app.service;
 
+import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
-import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -96,6 +96,7 @@ public class GameStateServiceTest {
 		Map<String, String> exisitngGameBoard = getGameBoardValues();
 		exisitngGameBoard.put("2", "O");
 		gameStateService.getGameBoard(exisitngGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
 		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 2));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
@@ -111,6 +112,7 @@ public class GameStateServiceTest {
 		existingGameBoard.put("4", "O");
 		existingGameBoard.put("5", "O");
 		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
 		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_X, 3));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
@@ -134,6 +136,7 @@ public class GameStateServiceTest {
 		existingGameBoard.put("5", "O");
 		existingGameBoard.put("8", "X");
 		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
 		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 6));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
@@ -156,6 +159,7 @@ public class GameStateServiceTest {
 		existingGameBoard.put("4", "X");
 		existingGameBoard.put("5", "O");
 		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
 		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_X, 7));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
@@ -179,6 +183,7 @@ public class GameStateServiceTest {
 		existingGameBoard.put("5", "O");
 		existingGameBoard.put("2", "O");
 		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
 		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 7));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
@@ -204,6 +209,7 @@ public class GameStateServiceTest {
 		existingGameBoard.put("5", "O");
 		existingGameBoard.put("7", "X");
 		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
 		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 9));
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
@@ -215,6 +221,30 @@ public class GameStateServiceTest {
 		expectedwinner.setDescription("Noone wins, Its a tie!");
 		assertEquals(
 				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				responseActual.getContentAsString());
+	}
+
+	@Test
+	public void checkGameOver() throws Exception {
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "X");
+		existingGameBoard.put("2", "X");
+		existingGameBoard.put("4", "O");
+		existingGameBoard.put("5", "O");
+		existingGameBoard.put("3", "X");
+		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.TRUE);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 9));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse responseActual = result.getResponse();
+		Player expectedwinner = new Player();
+		expectedwinner.setId(PLAYER_X);
+		expectedwinner.setDescription(PLAYER_1);
+		assertEquals(
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
 

@@ -3,6 +3,7 @@ package com.tictactoe.app.service;
 import static com.tictactoe.app.utility.ConstantsUtility.EIGHT;
 import static com.tictactoe.app.utility.ConstantsUtility.FIVE;
 import static com.tictactoe.app.utility.ConstantsUtility.FOUR;
+import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 import static com.tictactoe.app.utility.ConstantsUtility.MESSAGE;
 import static com.tictactoe.app.utility.ConstantsUtility.NINE;
 import static com.tictactoe.app.utility.ConstantsUtility.ONE;
@@ -16,7 +17,6 @@ import static com.tictactoe.app.utility.ConstantsUtility.SEVEN;
 import static com.tictactoe.app.utility.ConstantsUtility.SIX;
 import static com.tictactoe.app.utility.ConstantsUtility.THREE;
 import static com.tictactoe.app.utility.ConstantsUtility.TWO;
-import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +39,7 @@ import com.tictactoe.app.openapi.model.TurnResponse;
 public class GameStateService implements TictactoeApiDelegate {
 	private static final Logger log = LoggerFactory.getLogger(GameStateService.class);
 	private Map<String, String> gameBoard = new HashMap<>();
+	private Boolean IsGameEnd = Boolean.FALSE;
 
 	@Override
 	public ResponseEntity<NewGameInfo> startNewGame() {
@@ -54,21 +55,30 @@ public class GameStateService implements TictactoeApiDelegate {
 		gameBoard.put(EIGHT, null);
 		gameBoard.put(NINE, null);
 		newGameInfo.gameboard(gameBoard);
+		this.IsGameEnd = Boolean.FALSE;
 		log.info("New game started!.");
 		return new ResponseEntity<NewGameInfo>(newGameInfo, HttpStatus.CREATED);
 	}
 
 	@Override
 	public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
-		if (gameBoard.get(String.valueOf(turnRequest.getPosition())) != null) {
-			return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
-		}
-		gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
 		TurnResponse turnResponse = new TurnResponse();
-		turnResponse.setGameOver(Boolean.FALSE);
-		turnResponse.setState(gameBoard);
-		turnResponse.setWinner(findWinner());
-		return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+		if (IsGameEnd) {
+			turnResponse.setGameOver(Boolean.TRUE);
+			turnResponse.setState(gameBoard);
+			turnResponse.setWinner(findWinner());
+			return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+		} else {
+			if (gameBoard.get(String.valueOf(turnRequest.getPosition())) != null) {
+				return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
+			}
+			gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
+
+			turnResponse.setGameOver(IsGameEnd);
+			turnResponse.setState(gameBoard);
+			turnResponse.setWinner(findWinner());
+			return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+		}
 	}
 
 	public void getGameBoard(Map<String, String> gameBoard) {
@@ -84,16 +94,19 @@ public class GameStateService implements TictactoeApiDelegate {
 				playerWinner = new Player();
 				playerWinner.setId(winner);
 				playerWinner.setDescription(PLAYER_1);
+				gameEnd(Boolean.TRUE);
 				break;
 			case PLAYER_O:
 				playerWinner = new Player();
 				playerWinner.setId(winner);
 				playerWinner.setDescription(PLAYER_2);
+				gameEnd(Boolean.TRUE);
 				break;
 			case GAME_DRAW:
 				playerWinner = new Player();
 				playerWinner.setId(GAME_DRAW);
 				playerWinner.setDescription("Noone wins, Its a tie!");
+				gameEnd(Boolean.TRUE);
 				break;
 			default:
 				playerWinner = null;
@@ -152,6 +165,10 @@ public class GameStateService implements TictactoeApiDelegate {
 	public boolean IsGameDraw() {
 		int movesCount = gameBoard.values().stream().filter(Objects::nonNull).collect(Collectors.toList()).size();
 		return movesCount == 8;
+	}
+
+	public void gameEnd(Boolean isGameOVer) {
+		this.IsGameEnd = isGameOVer;
 	}
 
 }
