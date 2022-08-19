@@ -21,6 +21,7 @@ import static com.tictactoe.app.utility.ConstantsUtility.TWO;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -64,20 +65,26 @@ public class GameStateService implements TictactoeApiDelegate {
 	public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
 		TurnResponse turnResponse = new TurnResponse();
 		if (IsGameEnd) {
+			log.info("--:Hi Player-{}, Game over already:--", turnRequest.getPlayerId());
 			turnResponse.setGameOver(Boolean.TRUE);
 			turnResponse.setState(gameBoard);
 			turnResponse.setWinner(findWinner());
 			return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
 		} else {
-			if (gameBoard.get(String.valueOf(turnRequest.getPosition())) != null) {
+			if (validatePlayersTurn(turnRequest.getPlayerId())) {
+				if (gameBoard.get(String.valueOf(turnRequest.getPosition())) != null) {
+					log.info("--:Player-{} trying wrong move, Same position not allowed:--", turnRequest.getPlayerId());
+					return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
+				}
+				gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
+				turnResponse.setGameOver(IsGameEnd);
+				turnResponse.setState(gameBoard);
+				turnResponse.setWinner(findWinner());
+				return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+			} else {
+				log.info("--:Player-{} trying wrong move,Twice not allowed:--", turnRequest.getPlayerId());
 				return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
 			}
-			gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
-
-			turnResponse.setGameOver(IsGameEnd);
-			turnResponse.setState(gameBoard);
-			turnResponse.setWinner(findWinner());
-			return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
 		}
 	}
 
@@ -169,6 +176,17 @@ public class GameStateService implements TictactoeApiDelegate {
 
 	public void gameEnd(Boolean isGameOVer) {
 		this.IsGameEnd = isGameOVer;
+	}
+
+	public Boolean validatePlayersTurn(String player) {
+		Map<String, Long> playerWiseMovesCountMap = gameBoard.values().stream().filter(Objects::nonNull)
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+		if (playerWiseMovesCountMap.size() == 1) {
+			if (playerWiseMovesCountMap.containsKey(player));
+			return Boolean.FALSE;
+		}
+		return Boolean.TRUE;
+
 	}
 
 }

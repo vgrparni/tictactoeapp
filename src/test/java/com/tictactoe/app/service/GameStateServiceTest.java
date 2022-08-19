@@ -108,8 +108,8 @@ public class GameStateServiceTest {
 	public void checkHorizontalWinningToPlayerX() throws Exception {
 		Map<String, String> existingGameBoard = getGameBoardValues();
 		existingGameBoard.put("1", "X");
-		existingGameBoard.put("2", "X");
 		existingGameBoard.put("4", "O");
+		existingGameBoard.put("2", "X");
 		existingGameBoard.put("5", "O");
 		gameStateService.getGameBoard(existingGameBoard);
 		gameStateService.gameEnd(Boolean.FALSE);
@@ -131,8 +131,8 @@ public class GameStateServiceTest {
 	public void checkHorizontalWinningToPlayerO() throws Exception {
 		Map<String, String> existingGameBoard = getGameBoardValues();
 		existingGameBoard.put("1", "X");
-		existingGameBoard.put("7", "X");
 		existingGameBoard.put("4", "O");
+		existingGameBoard.put("7", "X");
 		existingGameBoard.put("5", "O");
 		existingGameBoard.put("8", "X");
 		gameStateService.getGameBoard(existingGameBoard);
@@ -181,7 +181,7 @@ public class GameStateServiceTest {
 		existingGameBoard.put("3", "O");
 		existingGameBoard.put("4", "X");
 		existingGameBoard.put("5", "O");
-		existingGameBoard.put("2", "O");
+		existingGameBoard.put("2", "X");
 		gameStateService.getGameBoard(existingGameBoard);
 		gameStateService.gameEnd(Boolean.FALSE);
 		ObjectWriter ow = new ObjectMapper().writer();
@@ -228,9 +228,9 @@ public class GameStateServiceTest {
 	public void checkGameOver() throws Exception {
 		Map<String, String> existingGameBoard = getGameBoardValues();
 		existingGameBoard.put("1", "X");
+		existingGameBoard.put("5", "O");
 		existingGameBoard.put("2", "X");
 		existingGameBoard.put("4", "O");
-		existingGameBoard.put("5", "O");
 		existingGameBoard.put("3", "X");
 		gameStateService.getGameBoard(existingGameBoard);
 		gameStateService.gameEnd(Boolean.TRUE);
@@ -246,6 +246,19 @@ public class GameStateServiceTest {
 		assertEquals(
 				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
+	}
+
+	@Test
+	public void validateOnePlayerShouldNotGiveMultipleMoves() throws Exception {
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "X");
+		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_X, 2));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		mockMvc.perform(requestBuilder).andExpect(status().is(400));
 	}
 
 	public Map<String, String> getGameBoardValues() {
