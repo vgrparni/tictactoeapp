@@ -50,7 +50,9 @@ public class GameStateService implements TictactoeApiDelegate {
 
 	@Override
 	public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
-		gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
+		if(gameBoard.get(String.valueOf(turnRequest.getPosition()))!=null) {
+			return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
+		}gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
 		TurnResponse turnResponse = new TurnResponse();
 		turnResponse.setGameOver(Boolean.FALSE);
 		turnResponse.setState(gameBoard);
@@ -58,7 +60,6 @@ public class GameStateService implements TictactoeApiDelegate {
 	}
 
 	public void getGameBoard(Map<String, String> gameBoard) {
-		this.gameBoard = gameBoard;
+		 this.gameBoard = gameBoard;
 	}
-
 }

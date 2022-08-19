@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -90,6 +92,22 @@ public class GameStateServiceTest {
 		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
 
 	}
+	
+	@Test
+	public void ShouldNotUpdateSamePosition() throws Exception {
+		Map<String, String> exisitngGameBoard = getGameBoardValues();
+		exisitngGameBoard.put("2", "O");
+		gameStateService.getGameBoard(exisitngGameBoard);
+		TurnRequest turnRequest = new TurnRequest();
+		turnRequest.setPosition(2);
+		turnRequest.setPlayerId("O");
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(turnRequest);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		mockMvc.perform(requestBuilder).andExpect(status().is(400));
+	}
+
 
 	public Map<String, String> getGameBoardValues() {
 		Map<String, String> expectedGameBoard = new HashMap<>();
