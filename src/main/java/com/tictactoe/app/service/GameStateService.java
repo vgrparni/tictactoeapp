@@ -179,11 +179,24 @@ public class GameStateService implements TictactoeApiDelegate {
 	}
 
 	public Boolean validatePlayersTurn(String player) {
+		log.info("--:Validating Players move:--");
 		Map<String, Long> playerWiseMovesCountMap = gameBoard.values().stream().filter(Objects::nonNull)
 				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-		if (playerWiseMovesCountMap.size() == 1) {
-			if (playerWiseMovesCountMap.containsKey(player));
-			return Boolean.FALSE;
+		if (playerWiseMovesCountMap.size() == 2) {
+			long firstPlayerOccupencyCount = playerWiseMovesCountMap.get(PLAYER_X);
+			long secondPlayerOccupencyCount = playerWiseMovesCountMap.get(PLAYER_O);
+			long difference = firstPlayerOccupencyCount > secondPlayerOccupencyCount
+					? firstPlayerOccupencyCount - secondPlayerOccupencyCount
+					: secondPlayerOccupencyCount - firstPlayerOccupencyCount;
+			if ((difference > 1 && (firstPlayerOccupencyCount > secondPlayerOccupencyCount && PLAYER_X.equals(player))
+					|| (secondPlayerOccupencyCount > firstPlayerOccupencyCount && PLAYER_O.equals(player)))) {
+				log.info("--:Player-{} has taken wrong turn:--", player);
+				return Boolean.FALSE;
+			}
+		} else if (playerWiseMovesCountMap.size() == 1) {
+			if (playerWiseMovesCountMap.containsKey(player)) {
+				return Boolean.FALSE;
+			}
 		}
 		return Boolean.TRUE;
 

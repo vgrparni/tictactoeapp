@@ -260,6 +260,22 @@ public class GameStateServiceTest {
 				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
 		mockMvc.perform(requestBuilder).andExpect(status().is(400));
 	}
+	
+	@Test
+	public void validateBothPlayerShouldNotGiveMultipleMoves() throws Exception {
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "O");
+		existingGameBoard.put("2", "X");
+		existingGameBoard.put("3", "O");
+		existingGameBoard.put("5", "X");
+		gameStateService.getGameBoard(existingGameBoard);
+		gameStateService.gameEnd(Boolean.FALSE);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_X, 2));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		mockMvc.perform(requestBuilder).andExpect(status().is(400));
+	}
 
 	public Map<String, String> getGameBoardValues() {
 		Map<String, String> expectedGameBoard = new HashMap<>();
