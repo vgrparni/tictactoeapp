@@ -9,16 +9,18 @@ import static com.tictactoe.app.utility.ConstantsUtility.ONE;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O_WIN_LINE;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X_WIN_LINE;
 import static com.tictactoe.app.utility.ConstantsUtility.SEVEN;
 import static com.tictactoe.app.utility.ConstantsUtility.SIX;
 import static com.tictactoe.app.utility.ConstantsUtility.THREE;
 import static com.tictactoe.app.utility.ConstantsUtility.TWO;
-import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X_WIN_LINE;
-import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O_WIN_LINE;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +89,11 @@ public class GameStateService implements TictactoeApiDelegate {
 				playerWinner.setId(winner);
 				playerWinner.setDescription(PLAYER_2);
 				break;
+			case "draw":
+				playerWinner = new Player();
+				playerWinner.setId("draw");
+				playerWinner.setDescription("No one wins, Its a tie!");
+				break;
 			default:
 				playerWinner = null;
 			}
@@ -133,7 +140,17 @@ public class GameStateService implements TictactoeApiDelegate {
 			} else if (PLAYER_O_WIN_LINE.equals(winLine)) {
 				return PLAYER_O;
 			}
+
+		}
+		if (IsGameDraw()) {
+			return "draw";
 		}
 		return null;
 	}
+
+	public boolean IsGameDraw() {
+		int movesCount = gameBoard.values().stream().filter(Objects::nonNull).collect(Collectors.toList()).size();
+		return movesCount == 8;
+	}
+
 }

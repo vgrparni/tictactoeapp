@@ -192,6 +192,31 @@ public class GameStateServiceTest {
 				responseActual.getContentAsString());
 	}
 
+	@Test
+	public void checkGameDraw() throws Exception {
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "X");
+		existingGameBoard.put("2", "O");
+		existingGameBoard.put("3", "X");
+		existingGameBoard.put("4", "O");
+		existingGameBoard.put("6", "X");
+		existingGameBoard.put("5", "O");
+		existingGameBoard.put("7", "X");
+		gameStateService.getGameBoard(existingGameBoard);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 9));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse responseActual = result.getResponse();
+		Player expectedwinner = new Player();
+		expectedwinner.setId("draw");
+		expectedwinner.setDescription("No one wins, Its a tie!");
+		assertEquals(
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				responseActual.getContentAsString());
+	}
+
 	public Map<String, String> getGameBoardValues() {
 		Map<String, String> expectedGameBoard = new HashMap<>();
 		expectedGameBoard.put("1", null);
