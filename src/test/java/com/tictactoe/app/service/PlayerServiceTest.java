@@ -19,13 +19,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tictactoe.app.openapi.model.Player;
+import static com.tictactoe.app.utility.ConstantPathUtility.PLAYERS_INFO_ENDPOINT;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class PlayerServiceTest {
 
-	private final String PLAYERS_INFO_ENDPOINT = "/tictactoe-players/info";
 	private final int BOARD_GAME_TEAM_SIZE = 2;
 	private final String EXPECTED_TEAM_INFO = "[{\"id\":\"X\",\"description\":\"Player1\"},{\"id\":\"O\",\"description\":\"Player2\"}]";
 	@Autowired
