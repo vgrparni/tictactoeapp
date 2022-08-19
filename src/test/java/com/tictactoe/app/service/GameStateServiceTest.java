@@ -10,8 +10,6 @@ import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,8 +24,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.tictactoe.app.openapi.model.NewGameInfo;
+import com.tictactoe.app.openapi.model.Player;
 import com.tictactoe.app.openapi.model.TurnRequest;
 import com.tictactoe.app.openapi.model.TurnResponse;
+import com.tictactoe.app.utility.ConstantsUtility;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -92,7 +92,7 @@ public class GameStateServiceTest {
 		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
 
 	}
-	
+
 	@Test
 	public void ShouldNotUpdateSamePosition() throws Exception {
 		Map<String, String> exisitngGameBoard = getGameBoardValues();
@@ -108,6 +108,35 @@ public class GameStateServiceTest {
 		mockMvc.perform(requestBuilder).andExpect(status().is(400));
 	}
 
+	@Test
+	public void checkHorizontalWinningToPlayerX() throws Exception {
+
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "X");
+		existingGameBoard.put("2", "X");
+		existingGameBoard.put("4", "O");
+		existingGameBoard.put("5", "O");
+		gameStateService.getGameBoard(existingGameBoard);
+		TurnRequest turnRequest = new TurnRequest();
+		turnRequest.setPlayerId("X");
+		turnRequest.setPosition(3);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(turnRequest);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse responseActual = result.getResponse();
+
+		TurnResponse expectedResponse = new TurnResponse();
+		Player expectedwinner = new Player();
+		expectedwinner.setId(ConstantsUtility.PLAYER_X);
+		expectedwinner.setDescription(ConstantsUtility.PLAYER_1);
+		expectedResponse.setGameOver(Boolean.FALSE);
+		expectedResponse.setState(existingGameBoard);
+		expectedResponse.setWinner(expectedwinner);
+		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
+
+	}
 
 	public Map<String, String> getGameBoardValues() {
 		Map<String, String> expectedGameBoard = new HashMap<>();

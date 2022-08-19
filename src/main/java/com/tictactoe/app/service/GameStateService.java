@@ -6,6 +6,8 @@ import static com.tictactoe.app.utility.ConstantsUtility.FOUR;
 import static com.tictactoe.app.utility.ConstantsUtility.MESSAGE;
 import static com.tictactoe.app.utility.ConstantsUtility.NINE;
 import static com.tictactoe.app.utility.ConstantsUtility.ONE;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
 import static com.tictactoe.app.utility.ConstantsUtility.SEVEN;
 import static com.tictactoe.app.utility.ConstantsUtility.SIX;
 import static com.tictactoe.app.utility.ConstantsUtility.THREE;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.tictactoe.app.openapi.api.TictactoeApiDelegate;
 import com.tictactoe.app.openapi.model.NewGameInfo;
+import com.tictactoe.app.openapi.model.Player;
 import com.tictactoe.app.openapi.model.TurnRequest;
 import com.tictactoe.app.openapi.model.TurnResponse;
 
@@ -57,10 +60,47 @@ public class GameStateService implements TictactoeApiDelegate {
 		TurnResponse turnResponse = new TurnResponse();
 		turnResponse.setGameOver(Boolean.FALSE);
 		turnResponse.setState(gameBoard);
+		turnResponse.setWinner(findWinner());
 		return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
 	}
 
 	public void getGameBoard(Map<String, String> gameBoard) {
 		this.gameBoard = gameBoard;
+	}
+
+	private Player findWinner() {
+		String winner = checkWinningPossibility();
+		Player playerWinner;
+		if (winner != null) {
+			playerWinner = new Player();
+			playerWinner.setId(winner);
+			playerWinner.setDescription(PLAYER_1);
+			return playerWinner;
+		}
+		return null;
+	}
+
+	public String checkWinningPossibility() {
+		int possibleWinLineCount= 8;
+		for (int line = 0; line < possibleWinLineCount; line++) {
+			String winLine = null;
+			switch (line) {
+			case 0:
+				winLine = gameBoard.get("1") + gameBoard.get("2") + gameBoard.get("3");
+				break;
+			case 1:
+				winLine = gameBoard.get("4") + gameBoard.get("5") + gameBoard.get("6");
+				break;
+			case 2:
+				winLine = gameBoard.get("7") + gameBoard.get("8") + gameBoard.get("9");
+				break;
+			default:
+				break;
+			}
+			if ("XXX".equals(winLine)) {
+				return PLAYER_X;
+			}
+		}
+		return null;
 	}
 }
