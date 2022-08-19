@@ -12,7 +12,8 @@ import static com.tictactoe.app.utility.ConstantsUtility.SEVEN;
 import static com.tictactoe.app.utility.ConstantsUtility.SIX;
 import static com.tictactoe.app.utility.ConstantsUtility.THREE;
 import static com.tictactoe.app.utility.ConstantsUtility.TWO;
-
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,16 +73,28 @@ public class GameStateService implements TictactoeApiDelegate {
 		String winner = checkWinningPossibility();
 		Player playerWinner;
 		if (winner != null) {
-			playerWinner = new Player();
-			playerWinner.setId(winner);
-			playerWinner.setDescription(PLAYER_1);
+			switch (winner) {
+			case PLAYER_X:
+				playerWinner = new Player();
+				playerWinner.setId(winner);
+				playerWinner.setDescription(PLAYER_1);
+				break;
+			case PLAYER_O:
+				playerWinner = new Player();
+				playerWinner.setId(winner);
+				playerWinner.setDescription(PLAYER_2);
+				break;
+			default:
+				playerWinner = null;
+			}
 			return playerWinner;
 		}
 		return null;
+
 	}
 
 	public String checkWinningPossibility() {
-		int possibleWinLineCount= 8;
+		int possibleWinLineCount = 8;
 		for (int line = 0; line < possibleWinLineCount; line++) {
 			String winLine = null;
 			switch (line) {
@@ -99,6 +112,8 @@ public class GameStateService implements TictactoeApiDelegate {
 			}
 			if ("XXX".equals(winLine)) {
 				return PLAYER_X;
+			} else if ("OOO".equals(winLine)) {
+				return PLAYER_O;
 			}
 		}
 		return null;

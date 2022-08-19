@@ -137,6 +137,37 @@ public class GameStateServiceTest {
 		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
 
 	}
+	
+	@Test
+	public void checkHorizontalWinningToPlayerO() throws Exception {
+
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "X");
+		existingGameBoard.put("7", "X");
+		existingGameBoard.put("4", "O");
+		existingGameBoard.put("5", "O");
+		existingGameBoard.put("8", "X");
+		gameStateService.getGameBoard(existingGameBoard);
+		TurnRequest turnRequest = new TurnRequest();
+		turnRequest.setPlayerId("O");
+		turnRequest.setPosition(6);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(turnRequest);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse responseActual = result.getResponse();
+
+		TurnResponse expectedResponse = new TurnResponse();
+		Player expectedwinner = new Player();
+		expectedwinner.setId(ConstantsUtility.PLAYER_O);
+		expectedwinner.setDescription(ConstantsUtility.PLAYER_2);
+		expectedResponse.setGameOver(Boolean.FALSE);
+		expectedResponse.setState(existingGameBoard);
+		expectedResponse.setWinner(expectedwinner);
+		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
+
+	}
 
 	public Map<String, String> getGameBoardValues() {
 		Map<String, String> expectedGameBoard = new HashMap<>();
