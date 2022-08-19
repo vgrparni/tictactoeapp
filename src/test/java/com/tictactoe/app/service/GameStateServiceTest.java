@@ -1,5 +1,9 @@
 package com.tictactoe.app.service;
 
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,7 +31,6 @@ import com.tictactoe.app.openapi.model.NewGameInfo;
 import com.tictactoe.app.openapi.model.Player;
 import com.tictactoe.app.openapi.model.TurnRequest;
 import com.tictactoe.app.openapi.model.TurnResponse;
-import com.tictactoe.app.utility.ConstantsUtility;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,7 +39,7 @@ public class GameStateServiceTest {
 	private static final String NEW_GAME_INFO_PATH = "/tictactoe/startNewGame";
 	private final int GAME_BOARD_POSITIONS_COUNT = 9;
 	private final String MESSAGE = "Hello Mr.X and Mr.O your game started!,All the best and enjoy playing";
-
+	private static final String PLAYER_TURN_INFO_PATH = "/tictactoe/playerTurn";
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -73,24 +76,18 @@ public class GameStateServiceTest {
 
 	@Test
 	public void updatePlayer() throws Exception {
-
 		Map<String, String> expectedGameBoard = getGameBoardValues();
 		gameStateService.getGameBoard(expectedGameBoard);
-		TurnRequest turnRequest = new TurnRequest();
-		turnRequest.setPlayerId("X");
-		turnRequest.setPosition(1);
 		ObjectWriter ow = new ObjectMapper().writer();
-		String json = ow.writeValueAsString(turnRequest);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_X, 1));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
 				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse responseActual = result.getResponse();
-
 		TurnResponse expectedResponse = new TurnResponse();
 		expectedResponse.setGameOver(Boolean.FALSE);
 		expectedResponse.setState(expectedGameBoard);
 		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
-
 	}
 
 	@Test
@@ -98,49 +95,37 @@ public class GameStateServiceTest {
 		Map<String, String> exisitngGameBoard = getGameBoardValues();
 		exisitngGameBoard.put("2", "O");
 		gameStateService.getGameBoard(exisitngGameBoard);
-		TurnRequest turnRequest = new TurnRequest();
-		turnRequest.setPosition(2);
-		turnRequest.setPlayerId("O");
 		ObjectWriter ow = new ObjectMapper().writer();
-		String json = ow.writeValueAsString(turnRequest);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 2));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
 				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
 		mockMvc.perform(requestBuilder).andExpect(status().is(400));
 	}
 
 	@Test
 	public void checkHorizontalWinningToPlayerX() throws Exception {
-
 		Map<String, String> existingGameBoard = getGameBoardValues();
 		existingGameBoard.put("1", "X");
 		existingGameBoard.put("2", "X");
 		existingGameBoard.put("4", "O");
 		existingGameBoard.put("5", "O");
 		gameStateService.getGameBoard(existingGameBoard);
-		TurnRequest turnRequest = new TurnRequest();
-		turnRequest.setPlayerId("X");
-		turnRequest.setPosition(3);
 		ObjectWriter ow = new ObjectMapper().writer();
-		String json = ow.writeValueAsString(turnRequest);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_X, 3));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
 				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse responseActual = result.getResponse();
-
-		TurnResponse expectedResponse = new TurnResponse();
 		Player expectedwinner = new Player();
-		expectedwinner.setId(ConstantsUtility.PLAYER_X);
-		expectedwinner.setDescription(ConstantsUtility.PLAYER_1);
-		expectedResponse.setGameOver(Boolean.FALSE);
-		expectedResponse.setState(existingGameBoard);
-		expectedResponse.setWinner(expectedwinner);
-		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
-
+		expectedwinner.setId(PLAYER_X);
+		expectedwinner.setDescription(PLAYER_1);
+		assertEquals(
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				responseActual.getContentAsString());
 	}
-	
+
 	@Test
 	public void checkHorizontalWinningToPlayerO() throws Exception {
-
 		Map<String, String> existingGameBoard = getGameBoardValues();
 		existingGameBoard.put("1", "X");
 		existingGameBoard.put("7", "X");
@@ -148,25 +133,18 @@ public class GameStateServiceTest {
 		existingGameBoard.put("5", "O");
 		existingGameBoard.put("8", "X");
 		gameStateService.getGameBoard(existingGameBoard);
-		TurnRequest turnRequest = new TurnRequest();
-		turnRequest.setPlayerId("O");
-		turnRequest.setPosition(6);
 		ObjectWriter ow = new ObjectMapper().writer();
-		String json = ow.writeValueAsString(turnRequest);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch("/tictactoe/playerTurn")
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 6));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
 				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse responseActual = result.getResponse();
-
-		TurnResponse expectedResponse = new TurnResponse();
 		Player expectedwinner = new Player();
-		expectedwinner.setId(ConstantsUtility.PLAYER_O);
-		expectedwinner.setDescription(ConstantsUtility.PLAYER_2);
-		expectedResponse.setGameOver(Boolean.FALSE);
-		expectedResponse.setState(existingGameBoard);
-		expectedResponse.setWinner(expectedwinner);
-		assertEquals(ow.writeValueAsString(expectedResponse), responseActual.getContentAsString());
-
+		expectedwinner.setId(PLAYER_O);
+		expectedwinner.setDescription(PLAYER_2);
+		assertEquals(
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				responseActual.getContentAsString());
 	}
 
 	public Map<String, String> getGameBoardValues() {
@@ -181,6 +159,21 @@ public class GameStateServiceTest {
 		expectedGameBoard.put("8", null);
 		expectedGameBoard.put("9", null);
 		return expectedGameBoard;
+	}
+
+	public TurnRequest prepareTurnRequest(String player, int position) {
+		TurnRequest turnRequest = new TurnRequest();
+		turnRequest.setPlayerId(player);
+		turnRequest.setPosition(position);
+		return turnRequest;
+	}
+
+	public TurnResponse prepareExpectedTurnResponse(Boolean isGameOver, Map<String, String> gameBoard, Player winner) {
+		TurnResponse expectedResponse = new TurnResponse();
+		expectedResponse.setGameOver(isGameOver);
+		expectedResponse.setState(gameBoard);
+		expectedResponse.setWinner(winner);
+		return expectedResponse;
 	}
 
 }
