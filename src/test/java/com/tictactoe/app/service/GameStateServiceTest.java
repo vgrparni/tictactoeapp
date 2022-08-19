@@ -4,6 +4,7 @@ import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
+import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -210,8 +211,8 @@ public class GameStateServiceTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse responseActual = result.getResponse();
 		Player expectedwinner = new Player();
-		expectedwinner.setId("draw");
-		expectedwinner.setDescription("No one wins, Its a tie!");
+		expectedwinner.setId(GAME_DRAW);
+		expectedwinner.setDescription("Noone wins, Its a tie!");
 		assertEquals(
 				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());

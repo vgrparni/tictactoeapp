@@ -16,6 +16,7 @@ import static com.tictactoe.app.utility.ConstantsUtility.SEVEN;
 import static com.tictactoe.app.utility.ConstantsUtility.SIX;
 import static com.tictactoe.app.utility.ConstantsUtility.THREE;
 import static com.tictactoe.app.utility.ConstantsUtility.TWO;
+import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -89,10 +90,10 @@ public class GameStateService implements TictactoeApiDelegate {
 				playerWinner.setId(winner);
 				playerWinner.setDescription(PLAYER_2);
 				break;
-			case "draw":
+			case GAME_DRAW:
 				playerWinner = new Player();
-				playerWinner.setId("draw");
-				playerWinner.setDescription("No one wins, Its a tie!");
+				playerWinner.setId(GAME_DRAW);
+				playerWinner.setDescription("Noone wins, Its a tie!");
 				break;
 			default:
 				playerWinner = null;
@@ -143,7 +144,7 @@ public class GameStateService implements TictactoeApiDelegate {
 
 		}
 		if (IsGameDraw()) {
-			return "draw";
+			return GAME_DRAW;
 		}
 		return null;
 	}
