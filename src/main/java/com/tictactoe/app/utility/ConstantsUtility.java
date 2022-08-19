@@ -11,4 +11,8 @@ public class ConstantsUtility {
 	public final static String SEVEN= "7";
 	public final static String EIGHT= "8";
 	public final static String NINE= "9";
+	public final static String PLAYER_X="X";
+	public final static String PLAYER_O="O";
+	public final static String PLAYER_1="Player1";
+	public final static String PLAYER_2="Player2";
 }
