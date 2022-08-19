@@ -7,13 +7,16 @@ import static com.tictactoe.app.utility.ConstantsUtility.MESSAGE;
 import static com.tictactoe.app.utility.ConstantsUtility.NINE;
 import static com.tictactoe.app.utility.ConstantsUtility.ONE;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
 import static com.tictactoe.app.utility.ConstantsUtility.SEVEN;
 import static com.tictactoe.app.utility.ConstantsUtility.SIX;
 import static com.tictactoe.app.utility.ConstantsUtility.THREE;
 import static com.tictactoe.app.utility.ConstantsUtility.TWO;
-import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
-import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X_WIN_LINE;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O_WIN_LINE;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,20 +102,20 @@ public class GameStateService implements TictactoeApiDelegate {
 			String winLine = null;
 			switch (line) {
 			case 0:
-				winLine = gameBoard.get("1") + gameBoard.get("2") + gameBoard.get("3");
+				winLine = gameBoard.get(ONE) + gameBoard.get(TWO) + gameBoard.get(THREE);
 				break;
 			case 1:
-				winLine = gameBoard.get("4") + gameBoard.get("5") + gameBoard.get("6");
+				winLine = gameBoard.get(FOUR) + gameBoard.get(FIVE) + gameBoard.get(SIX);
 				break;
 			case 2:
-				winLine = gameBoard.get("7") + gameBoard.get("8") + gameBoard.get("9");
+				winLine = gameBoard.get(SEVEN) + gameBoard.get(EIGHT) + gameBoard.get(NINE);
 				break;
 			default:
 				break;
 			}
-			if ("XXX".equals(winLine)) {
+			if (PLAYER_X_WIN_LINE.equals(winLine)) {
 				return PLAYER_X;
-			} else if ("OOO".equals(winLine)) {
+			} else if (PLAYER_O_WIN_LINE.equals(winLine)) {
 				return PLAYER_O;
 			}
 		}
