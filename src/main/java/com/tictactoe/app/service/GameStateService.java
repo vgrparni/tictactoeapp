@@ -119,6 +119,12 @@ public class GameStateService implements TictactoeApiDelegate {
 			case 5:
 				winLine = gameBoard.get(THREE) + gameBoard.get(SIX) + gameBoard.get(NINE);
 				break;
+			case 6:
+				winLine = gameBoard.get(ONE) + gameBoard.get(FIVE) + gameBoard.get(NINE);
+				break;
+			case 7:
+				winLine = gameBoard.get(THREE) + gameBoard.get(FIVE) + gameBoard.get(SEVEN);
+				break;
 			default:
 				break;
 			}

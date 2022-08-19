@@ -146,7 +146,7 @@ public class GameStateServiceTest {
 				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
-	
+
 	@Test
 	public void checkVerticalWinningToPlayer() throws Exception {
 		Map<String, String> existingGameBoard = getGameBoardValues();
@@ -164,6 +164,29 @@ public class GameStateServiceTest {
 		Player expectedwinner = new Player();
 		expectedwinner.setId(PLAYER_X);
 		expectedwinner.setDescription(PLAYER_1);
+		assertEquals(
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				responseActual.getContentAsString());
+	}
+
+	@Test
+	public void checkDiagonalWinningPlayer() throws Exception {
+		Map<String, String> existingGameBoard = getGameBoardValues();
+		existingGameBoard.put("1", "X");
+		existingGameBoard.put("3", "O");
+		existingGameBoard.put("4", "X");
+		existingGameBoard.put("5", "O");
+		existingGameBoard.put("2", "O");
+		gameStateService.getGameBoard(existingGameBoard);
+		ObjectWriter ow = new ObjectMapper().writer();
+		String json = ow.writeValueAsString(prepareTurnRequest(PLAYER_O, 7));
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.patch(PLAYER_TURN_INFO_PATH)
+				.accept(MediaType.APPLICATION_JSON).content(json).contentType(MediaType.APPLICATION_JSON);
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse responseActual = result.getResponse();
+		Player expectedwinner = new Player();
+		expectedwinner.setId(PLAYER_O);
+		expectedwinner.setDescription(PLAYER_2);
 		assertEquals(
 				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
