@@ -74,7 +74,7 @@ public class GameBoardChecker {
 	}
 
 	public boolean isGameDraw(Map<String, String> gameBoard) {
-		int movesCount = gameBoard.values().stream().filter(Objects::nonNull).collect(Collectors.toList()).size();
+		long movesCount = gameBoard.values().stream().filter(Objects::nonNull).count();
 		return movesCount == 8;
 	}
 
