@@ -56,14 +56,9 @@ public class GameStateService implements TictactoeApiDelegate {
 
 	@Override
 	public ResponseEntity<TurnResponse> playerTurn(TurnRequest turnRequest) {
-		TurnResponse turnResponse = new TurnResponse();
 		if (this.isGameEnd) {
 			log.info("--:Hi Player-{}, Game over already:--", turnRequest.getPlayerId());
-			Player winner = gameBoardChecker.findWinner(this.gameBoard);
-			turnResponse.setGameOver(Boolean.TRUE);
-			turnResponse.setState(this.gameBoard);
-			turnResponse.setWinner(winner);
-			return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+			return new ResponseEntity<TurnResponse>(preparePlayerTurnResponse(), HttpStatus.OK);
 		} else {
 			if (gameBoardChecker.validatePlayersTurn(turnRequest.getPlayerId(), this.gameBoard)) {
 				if (this.gameBoard.get(String.valueOf(turnRequest.getPosition())) != null) {
@@ -71,14 +66,7 @@ public class GameStateService implements TictactoeApiDelegate {
 					return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
 				}
 				this.gameBoard.put(turnRequest.getPosition().toString(), turnRequest.getPlayerId());
-				Player winner = gameBoardChecker.findWinner(this.gameBoard);
-				if (winner != null) {
-					gameEnd(Boolean.TRUE);
-				}
-				turnResponse.setGameOver(this.isGameEnd);
-				turnResponse.setState(this.gameBoard);
-				turnResponse.setWinner(winner);
-				return new ResponseEntity<TurnResponse>(turnResponse, HttpStatus.OK);
+				return new ResponseEntity<TurnResponse>(preparePlayerTurnResponse(), HttpStatus.OK);
 			} else {
 				log.info("--:Player-{} trying wrong move,Twice not allowed:--", turnRequest.getPlayerId());
 				return new ResponseEntity<TurnResponse>(HttpStatus.BAD_REQUEST);
@@ -99,4 +87,15 @@ public class GameStateService implements TictactoeApiDelegate {
 		this.isGameEnd = isGameOVer;
 	}
 
+	public TurnResponse preparePlayerTurnResponse() {
+		TurnResponse turnResponse = new TurnResponse();
+		Player winner = gameBoardChecker.findWinner(this.gameBoard);
+		if (winner != null) {
+			gameEnd(Boolean.TRUE);
+		}
+		turnResponse.setGameOver(this.isGameEnd);
+		turnResponse.setState(this.gameBoard);
+		turnResponse.setWinner(winner);
+		return turnResponse;
+	}
 }
