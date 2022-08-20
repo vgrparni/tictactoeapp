@@ -67,13 +67,13 @@ public class GameBoardChecker {
 			}
 
 		}
-		if (IsGameDraw(gameBoard)) {
+		if (isGameDraw(gameBoard)) {
 			return GAME_DRAW;
 		}
 		return null;
 	}
 
-	public boolean IsGameDraw(Map<String, String> gameBoard) {
+	public boolean isGameDraw(Map<String, String> gameBoard) {
 		int movesCount = gameBoard.values().stream().filter(Objects::nonNull).collect(Collectors.toList()).size();
 		return movesCount == 8;
 	}
