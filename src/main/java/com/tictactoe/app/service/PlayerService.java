@@ -20,6 +20,10 @@ public class PlayerService implements TictactoePlayersApiDelegate {
 
 	@Override
 	public ResponseEntity<List<Player>> getPlayersInfo() {
+		return new ResponseEntity<List<Player>>(getPlayerList(), HttpStatus.OK);
+	}
+
+	public List<Player> getPlayerList() {
 		Player player1 = new Player();
 		player1.setId(PLAYER_X);
 		player1.setDescription(PLAYER_1);
@@ -29,6 +33,7 @@ public class PlayerService implements TictactoePlayersApiDelegate {
 		List<Player> playerList = new ArrayList<Player>();
 		playerList.add(player1);
 		playerList.add(player2);
-		return new ResponseEntity<List<Player>>(playerList, HttpStatus.OK);
+		return playerList;
 	}
+
 }
