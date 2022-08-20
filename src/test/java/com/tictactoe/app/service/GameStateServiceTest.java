@@ -18,13 +18,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -37,7 +35,6 @@ import com.tictactoe.app.openapi.model.Player;
 import com.tictactoe.app.openapi.model.TurnRequest;
 import com.tictactoe.app.openapi.model.TurnResponse;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GameStateServiceTest {
@@ -125,7 +122,7 @@ public class GameStateServiceTest {
 		expectedwinner.setId(PLAYER_X);
 		expectedwinner.setDescription(PLAYER_1);
 		assertEquals(
-				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
 
@@ -149,7 +146,7 @@ public class GameStateServiceTest {
 		expectedwinner.setId(PLAYER_O);
 		expectedwinner.setDescription(PLAYER_2);
 		assertEquals(
-				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
 
@@ -172,7 +169,7 @@ public class GameStateServiceTest {
 		expectedwinner.setId(PLAYER_X);
 		expectedwinner.setDescription(PLAYER_1);
 		assertEquals(
-				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
 
@@ -196,7 +193,7 @@ public class GameStateServiceTest {
 		expectedwinner.setId(PLAYER_O);
 		expectedwinner.setDescription(PLAYER_2);
 		assertEquals(
-				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
 
@@ -222,7 +219,7 @@ public class GameStateServiceTest {
 		expectedwinner.setId(GAME_DRAW);
 		expectedwinner.setDescription("Noone wins, Its a tie!");
 		assertEquals(
-				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.FALSE, existingGameBoard, expectedwinner)),
+				ow.writeValueAsString(prepareExpectedTurnResponse(Boolean.TRUE, existingGameBoard, expectedwinner)),
 				responseActual.getContentAsString());
 	}
 
