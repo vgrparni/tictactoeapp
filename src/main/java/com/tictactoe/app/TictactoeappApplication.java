@@ -8,11 +8,11 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class, scanBasePackages = { "com.tictactoe.app.*"})
-public class TictactoeappApplication {
-	 private static final Logger log = LoggerFactory.getLogger(TictactoeappApplication.class);
+public class TicTacToeAppApplication {
+	 private static final Logger log = LoggerFactory.getLogger(TicTacToeAppApplication.class);
 	public static void main(String[] args) {
 		log.info("----Running tictactoeapp service---- ");
-		SpringApplication.run(TictactoeappApplication.class, args);
+		SpringApplication.run(TicTacToeAppApplication.class, args);
 	}
 
 }
