@@ -6,6 +6,8 @@ import static com.tictactoe.app.utility.ConstantsUtility.FOUR;
 import static com.tictactoe.app.utility.ConstantsUtility.GAME_DRAW;
 import static com.tictactoe.app.utility.ConstantsUtility.NINE;
 import static com.tictactoe.app.utility.ConstantsUtility.ONE;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_1;
+import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_2;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_O_WIN_LINE;
 import static com.tictactoe.app.utility.ConstantsUtility.PLAYER_X;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.tictactoe.app.openapi.model.Player;
 
 @Component
 public class GameBoardChecker {
@@ -101,5 +105,35 @@ public class GameBoardChecker {
 		return Boolean.TRUE;
 
 	}
+	
+	public Player findWinner(Map<String, String> gameBoard) {
+		String winner = checkWinningPossibility(gameBoard);
+		Player playerWinner;
+		if (winner != null) {
+			switch (winner) {
+			case PLAYER_X:
+				playerWinner = new Player();
+				playerWinner.setId(winner);
+				playerWinner.setDescription(PLAYER_1);
+				break;
+			case PLAYER_O:
+				playerWinner = new Player();
+				playerWinner.setId(winner);
+				playerWinner.setDescription(PLAYER_2);
+				break;
+			case GAME_DRAW:
+				playerWinner = new Player();
+				playerWinner.setId(GAME_DRAW);
+				playerWinner.setDescription("Noone wins, Its a tie!");
+				break;
+			default:
+				playerWinner = null;
+			}
+			return playerWinner;
+		}
+		return null;
+
+	}
+
 	
 }
